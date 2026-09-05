@@ -91,20 +91,35 @@ def get_message(request: Request, msg_id: str):
     headers_list = msg_detail.get('payload', {}).get('headers', [])
     headers = {h['name']: h['value'] for h in headers_list}
     
+    def get_body(parts):
+        html_body = ""
+        plain_body = ""
+        for part in parts:
+            mime_type = part.get('mimeType')
+            if mime_type == 'text/html':
+                data = part.get('body', {}).get('data', '')
+                if data:
+                    html_body = base64.urlsafe_b64decode(data).decode('utf-8')
+            elif mime_type == 'text/plain':
+                data = part.get('body', {}).get('data', '')
+                if data:
+                    plain_body = base64.urlsafe_b64decode(data).decode('utf-8')
+            elif mime_type and mime_type.startswith('multipart/'):
+                sub_html, sub_plain = get_body(part.get('parts', []))
+                if sub_html: html_body = sub_html
+                if sub_plain: plain_body = sub_plain
+        return html_body, plain_body
+
     body = ""
-    parts = msg_detail.get('payload', {}).get('parts', [])
-    if not parts:
-        data = msg_detail.get('payload', {}).get('body', {}).get('data', '')
+    payload = msg_detail.get('payload', {})
+    if payload.get('mimeType') in ['text/html', 'text/plain']:
+        data = payload.get('body', {}).get('data', '')
         if data:
             body = base64.urlsafe_b64decode(data).decode('utf-8')
     else:
-        for part in parts:
-            if part.get('mimeType') == 'text/plain' or part.get('mimeType') == 'text/html':
-                data = part.get('body', {}).get('data', '')
-                if data:
-                    body = base64.urlsafe_b64decode(data).decode('utf-8')
-                    break
-    
+        html, plain = get_body(payload.get('parts', []))
+        body = html if html else plain
+
     return {
         "id": msg_detail['id'],
         "threadId": msg_detail['threadId'],

@@ -49,8 +49,17 @@ const EmailDetail = () => {
         </div>
       </div>
       
-      <div className="detail-body">
-        {email.body || '(Empty body)'}
+      <div className="detail-body" style={{ padding: 0, overflow: 'hidden' }}>
+        {email.body ? (
+          <iframe 
+            srcDoc={email.body} 
+            style={{ width: '100%', height: '600px', border: 'none', backgroundColor: 'white' }} 
+            title="Email Content"
+            sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin"
+          />
+        ) : (
+          <div style={{ padding: '24px' }}>(Empty body)</div>
+        )}
       </div>
       
       <div className="action-buttons">

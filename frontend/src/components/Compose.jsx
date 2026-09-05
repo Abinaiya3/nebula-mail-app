@@ -1,14 +1,22 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Send } from 'lucide-react';
 import api from '../api';
+import { useMailContext } from '../context/MailContext';
 
 const Compose = () => {
-  const [to, setTo] = useState('');
-  const [subject, setSubject] = useState('');
-  const [body, setBody] = useState('');
+  const { composeFormState, setComposeFormState } = useMailContext();
+  const [to, setTo] = useState(composeFormState.to || '');
+  const [subject, setSubject] = useState(composeFormState.subject || '');
+  const [body, setBody] = useState(composeFormState.body || '');
   const [isSending, setIsSending] = useState(false);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    setTo(composeFormState.to || '');
+    setSubject(composeFormState.subject || '');
+    setBody(composeFormState.body || '');
+  }, [composeFormState]);
 
   const handleSend = async (e) => {
     e.preventDefault();

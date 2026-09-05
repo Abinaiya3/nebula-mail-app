@@ -16,6 +16,7 @@ export function useCopilotMailActions() {
     filterInbox,
     openEmail,
     prefillReply,
+    emails,
   } = useMailContext();
 
   // ── READABLE CONTEXT ────────────────────────────────────────────
@@ -37,6 +38,17 @@ export function useCopilotMailActions() {
   useCopilotReadable({
     description: "The current state of the compose form (to, subject, body fields)",
     value: composeFormState,
+  });
+
+  useCopilotReadable({
+    description: "The list of emails currently visible to the user in the inbox. It contains their ID, sender, subject, date, and a snippet of the body.",
+    value: emails.map(e => ({
+      id: e.id,
+      sender: e.sender || e.from,
+      subject: e.subject,
+      date: e.date,
+      snippet: e.snippet
+    })),
   });
 
   // ── ACTION: openCompose ─────────────────────────────────────────
@@ -110,13 +122,15 @@ export function useCopilotMailActions() {
   // ── ACTION: prefillReply ────────────────────────────────────────
   useCopilotAction({
     name: "prefillReply",
-    description: "Reply to the currently open email. Pre-fills the compose form with the original sender, Re: subject, and quoted body. An email must be open in detail view first.",
-    parameters: [],
-    handler: async () => {
+    description: "Reply to the currently open email. Pre-fills the compose form with the original sender, Re: subject, and quoted body. You can optionally include custom text to prepend to the body.",
+    parameters: [
+      { name: "customText", type: "string", description: "Custom text to include in the reply before the quoted message", required: false }
+    ],
+    handler: async ({ customText }) => {
       if (!currentOpenEmailId) {
         return "No email is currently open. Please open an email first, then say 'reply to this'.";
       }
-      await prefillReply();
+      await prefillReply({ customText });
       return "Reply compose form opened with the original sender, subject, and quoted message.";
     },
   });

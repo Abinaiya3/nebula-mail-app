@@ -65,13 +65,13 @@ export function MailProvider({ children }) {
   }, [navigate]);
 
   // ── ACTION: prefillReply ────────────────────────────────────────
-  const prefillReply = useCallback(async () => {
+  const prefillReply = useCallback(async ({ customText = "" } = {}) => {
     if (!currentOpenEmailId) return;
     const res = await api.get(`/mail/message/${currentOpenEmailId}`);
     const email = res.data;
     
     const replySubject = email.subject?.startsWith('Re:') ? email.subject : `Re: ${email.subject}`;
-    const quotedBody = `\n\n--- Original Message ---\nFrom: ${email.from}\nDate: ${email.date}\n\n${email.body || email.snippet}`;
+    const quotedBody = `${customText ? customText + '\n\n' : ''}--- Original Message ---\nFrom: ${email.from}\nDate: ${email.date}\n\n${email.body || email.snippet}`;
     
     openCompose({
       to: email.from,

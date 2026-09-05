@@ -7,6 +7,22 @@
     <title>frontend</title>
   </head>
   <body>
+    <script>
+      window.onerror = function (msg) {
+        var d = document.createElement('div');
+        d.style.color = 'yellow'; d.style.background = 'black'; d.style.padding = '10px';
+        d.innerHTML = 'ERROR: ' + msg; document.body.appendChild(d); return false;
+      };
+      const o = console.error;
+      console.error = function(...args) {
+        if(args[0] && args[0].message) {
+           var d = document.createElement('div');
+           d.style.color = 'yellow'; d.style.background = 'black'; d.style.padding = '10px';
+           d.innerHTML = 'CONSOLE ERROR: ' + args[0].message; document.body.appendChild(d);
+        }
+        o.apply(console, args);
+      };
+    </script>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>

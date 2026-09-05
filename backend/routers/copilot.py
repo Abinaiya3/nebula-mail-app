@@ -24,6 +24,6 @@ def get_agent():
     graph.add_edge("chatbot", END)
     app_graph = graph.compile()
 
-    return LangGraphAGUIAgent(name="mail_agent", description="Mail Assistant", graph=app_graph)
+    return LangGraphAGUIAgent(name="default", description="Mail Assistant", graph=app_graph)
 
 sdk = CopilotKitSDK(agents=[get_agent()])

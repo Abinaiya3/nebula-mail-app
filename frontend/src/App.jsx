@@ -14,7 +14,7 @@ import "@copilotkit/react-ui/styles.css";
 
 function App() {
   return (
-    <CopilotKit runtimeUrl="http://localhost:8000/copilotkit">
+    <CopilotKit runtimeUrl="http://localhost:4000/copilotkit">
       <Router>
         <MailProvider>
           <CopilotActionsRegistrar>

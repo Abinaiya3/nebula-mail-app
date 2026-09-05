@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../api';
+import { useMailContext } from '../context/MailContext';
 
 const Inbox = () => {
-  const [emails, setEmails] = useState([]);
+  const { emails, setEmails } = useMailContext();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
