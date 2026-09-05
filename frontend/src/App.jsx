@@ -5,41 +5,37 @@ import Inbox from './components/Inbox';
 import Sent from './components/Sent';
 import Compose from './components/Compose';
 import EmailDetail from './components/EmailDetail';
-import api from './api';
+import CopilotActionsRegistrar from './components/CopilotActionsRegistrar';
+import { MailProvider } from './context/MailContext';
 import './index.css';
 import { CopilotKit } from "@copilotkit/react-core";
 import { CopilotSidebar } from "@copilotkit/react-ui";
 import "@copilotkit/react-ui/styles.css";
 
 function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [loading, setLoading] = useState(true);
-
-  // For testing purposes, we'll bypass actual auth check if backend isn't ready
-  // In a real flow, you'd verify session here.
-  useEffect(() => {
-    setIsAuthenticated(true); // Auto-authenticated for UI development
-    setLoading(false);
-  }, []);
-
-  if (loading) {
-    return <div className="loading-state">Loading Nebula Mail...</div>;
-  }
-
   return (
     <CopilotKit runtimeUrl="http://localhost:8000/copilotkit">
       <Router>
-        <CopilotSidebar defaultOpen={true} clickOutsideToClose={false}>
-          <Routes>
-            <Route path="/" element={<Layout />}>
-              <Route index element={<Navigate to="/inbox" replace />} />
-              <Route path="inbox" element={<Inbox />} />
-              <Route path="sent" element={<Sent />} />
-              <Route path="compose" element={<Compose />} />
-              <Route path="message/:id" element={<EmailDetail />} />
-            </Route>
-          </Routes>
-        </CopilotSidebar>
+        <MailProvider>
+          <CopilotActionsRegistrar>
+            <CopilotSidebar
+              defaultOpen={false}
+              clickOutsideToClose={false}
+              instructions="You are a helpful AI mail assistant. You can open the compose form, send emails, filter the inbox, open specific emails, and pre-fill replies. Use the provided actions to control the UI."
+              labels={{ title: "Mail Assistant", initial: "Hi! I'm your mail assistant. Try saying:\n• 'Open compose'\n• 'Show emails from last 7 days'\n• 'Reply to this'" }}
+            >
+              <Routes>
+                <Route path="/" element={<Layout />}>
+                  <Route index element={<Navigate to="/inbox" replace />} />
+                  <Route path="inbox" element={<Inbox />} />
+                  <Route path="sent" element={<Sent />} />
+                  <Route path="compose" element={<Compose />} />
+                  <Route path="message/:id" element={<EmailDetail />} />
+                </Route>
+              </Routes>
+            </CopilotSidebar>
+          </CopilotActionsRegistrar>
+        </MailProvider>
       </Router>
     </CopilotKit>
   );
