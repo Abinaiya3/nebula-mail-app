@@ -7,6 +7,9 @@ import Compose from './components/Compose';
 import EmailDetail from './components/EmailDetail';
 import api from './api';
 import './index.css';
+import { CopilotKit } from "@copilotkit/react-core";
+import { CopilotSidebar } from "@copilotkit/react-ui";
+import "@copilotkit/react-ui/styles.css";
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -24,17 +27,21 @@ function App() {
   }
 
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<Layout />}>
-          <Route index element={<Navigate to="/inbox" replace />} />
-          <Route path="inbox" element={<Inbox />} />
-          <Route path="sent" element={<Sent />} />
-          <Route path="compose" element={<Compose />} />
-          <Route path="message/:id" element={<EmailDetail />} />
-        </Route>
-      </Routes>
-    </Router>
+    <CopilotKit runtimeUrl="http://localhost:8000/copilotkit">
+      <Router>
+        <CopilotSidebar defaultOpen={true} clickOutsideToClose={false}>
+          <Routes>
+            <Route path="/" element={<Layout />}>
+              <Route index element={<Navigate to="/inbox" replace />} />
+              <Route path="inbox" element={<Inbox />} />
+              <Route path="sent" element={<Sent />} />
+              <Route path="compose" element={<Compose />} />
+              <Route path="message/:id" element={<EmailDetail />} />
+            </Route>
+          </Routes>
+        </CopilotSidebar>
+      </Router>
+    </CopilotKit>
   );
 }
 
