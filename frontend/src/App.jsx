@@ -5,6 +5,7 @@ import Inbox from './components/Inbox';
 import Sent from './components/Sent';
 import Compose from './components/Compose';
 import EmailDetail from './components/EmailDetail';
+import Login from './components/Login';
 import CopilotActionsRegistrar from './components/CopilotActionsRegistrar';
 import { MailProvider } from './context/MailContext';
 import './index.css';
@@ -25,6 +26,7 @@ function App() {
               labels={{ title: "Mail Assistant", initial: "Hi! I'm your mail assistant. Try saying:\n• 'Open compose'\n• 'Show emails from last 7 days'\n• 'Reply to this'" }}
             >
               <Routes>
+                <Route path="/login" element={<Login />} />
                 <Route path="/" element={<Layout />}>
                   <Route index element={<Navigate to="/inbox" replace />} />
                   <Route path="inbox" element={<Inbox />} />
