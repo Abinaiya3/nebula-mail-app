@@ -36,5 +36,4 @@ async def auth_callback(request: Request):
     request.session['access_token'] = token.get('access_token')
     request.session['refresh_token'] = token.get('refresh_token')
     
-    # Normally we redirect to frontend here
-    return {"message": "Successfully authenticated", "user": user}
+    return RedirectResponse(url="http://localhost:5173/inbox")
