@@ -82,7 +82,6 @@ export function MailProvider({ children }) {
       subject: replySubject,
       body: quotedBody,
     });
-    });
   }, [currentOpenEmailId, openCompose]);
 
   // ── BACKGROUND POLLING ──────────────────────────────────────────
