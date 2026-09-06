@@ -45,7 +45,7 @@ def get_inbox(request: Request, date_from: str = None, date_to: str = None, send
         
     q = " ".join(query_parts)
     
-    results = service.users().messages().list(userId='me', q=q, maxResults=20).execute()
+    results = service.users().messages().list(userId='me', q=q, maxResults=50).execute()
     messages = results.get('messages', [])
     
     email_list = []
