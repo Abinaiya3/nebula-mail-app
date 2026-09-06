@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../api';
 import { useMailContext } from '../context/MailContext';
+import FilterBar from './FilterBar';
 
 const Inbox = () => {
   const { emails, setEmails } = useMailContext();
@@ -31,7 +32,9 @@ const Inbox = () => {
   if (error) return <div className="loading-state" style={{color: 'var(--text-secondary)'}}>{error}</div>;
 
   return (
-    <div className="email-list">
+    <div className="inbox-container">
+      <FilterBar />
+      <div className="email-list">
       {emails.length === 0 ? (
         <div className="loading-state">No emails found in inbox.</div>
       ) : (
@@ -46,6 +49,7 @@ const Inbox = () => {
           </div>
         ))
       )}
+    </div>
     </div>
   );
 };
