@@ -1,9 +1,21 @@
 import React from 'react';
-import { Outlet, NavLink, useLocation } from 'react-router-dom';
-import { Inbox, Send, Edit, Mail } from 'lucide-react';
+import { Outlet, NavLink, useLocation, useNavigate } from 'react-router-dom';
+import { Inbox, Send, Edit, Mail, LogOut } from 'lucide-react';
+import api from '../api';
 
 const Layout = () => {
   const location = useLocation();
+  const navigate = useNavigate();
+  
+  const handleLogout = async () => {
+    try {
+      await api.post('/auth/logout');
+    } catch (err) {
+      console.error('Logout failed', err);
+    }
+    // Always redirect to login
+    window.location.href = '/login';
+  };
   
   const getHeaderTitle = () => {
     if (location.pathname.includes('/inbox')) return 'Inbox';
@@ -28,6 +40,21 @@ const Layout = () => {
             <Edit className="w-5 h-5" /> Compose
           </NavLink>
         </nav>
+        <div style={{ marginTop: 'auto' }}>
+          <button 
+            onClick={handleLogout}
+            style={{ 
+              display: 'flex', alignItems: 'center', gap: '12px', padding: '12px', 
+              width: '100%', background: 'transparent', border: 'none', 
+              color: 'var(--text-secondary)', cursor: 'pointer', borderRadius: '8px',
+              fontWeight: 500, fontSize: '1rem', transition: 'all 0.2s ease'
+            }}
+            onMouseOver={(e) => { e.currentTarget.style.backgroundColor = 'var(--bg-tertiary)'; e.currentTarget.style.color = '#ef4444'; }}
+            onMouseOut={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; e.currentTarget.style.color = 'var(--text-secondary)'; }}
+          >
+            <LogOut className="w-5 h-5" /> Logout
+          </button>
+        </div>
       </div>
       <div className="main-content">
         <header className="header">

@@ -37,3 +37,8 @@ async def auth_callback(request: Request):
     request.session['refresh_token'] = token.get('refresh_token')
     
     return RedirectResponse(url="http://localhost:5173/inbox")
+
+@router.post('/logout')
+async def logout(request: Request):
+    request.session.clear()
+    return {"message": "Successfully logged out"}
