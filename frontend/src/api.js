@@ -9,7 +9,7 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response && error.response.status === 401) {
-      window.location.href = 'http://localhost:8000/auth/login';
+      window.location.href = 'http://localhost:8000/auth/google/login';
     }
     return Promise.reject(error);
   }
