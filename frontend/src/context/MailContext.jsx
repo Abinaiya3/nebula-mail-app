@@ -13,6 +13,7 @@ export function MailProvider({ children }) {
   const [activeFilters, setActiveFilters] = useState({});
   const [composeFormState, setComposeFormState] = useState({ to: '', subject: '', body: '' });
   const [emails, setEmails] = useState([]);
+  const [historyId, setHistoryId] = useState(null);
 
   // ── ACTION: openCompose ─────────────────────────────────────────
   const openCompose = useCallback(({ to = '', subject = '', body = '' } = {}) => {
@@ -39,6 +40,9 @@ export function MailProvider({ children }) {
     const params = new URLSearchParams(filters).toString();
     const res = await api.get(`/mail/inbox?${params}`);
     setEmails(res.data.emails || []);
+    if (res.data.historyId) {
+      setHistoryId(res.data.historyId);
+    }
     setCurrentView('inbox');
     navigate('/inbox');
     return res.data.emails || [];
@@ -78,7 +82,37 @@ export function MailProvider({ children }) {
       subject: replySubject,
       body: quotedBody,
     });
+    });
   }, [currentOpenEmailId, openCompose]);
+
+  // ── BACKGROUND POLLING ──────────────────────────────────────────
+  useEffect(() => {
+    let intervalId;
+    if (historyId) {
+      intervalId = setInterval(async () => {
+        try {
+          const res = await api.get(`/mail/sync?history_id=${historyId}`);
+          if (res.data.has_updates) {
+            // Re-fetch inbox with current filters silently
+            const params = new URLSearchParams(activeFilters).toString();
+            const inboxRes = await api.get(`/mail/inbox?${params}`);
+            setEmails(inboxRes.data.emails || []);
+            if (inboxRes.data.historyId) {
+              setHistoryId(inboxRes.data.historyId);
+            }
+          } else if (res.data.historyId) {
+            // Just update historyId if it moved forward without relevant changes
+            setHistoryId(res.data.historyId);
+          }
+        } catch (err) {
+          console.error("Error during inbox sync:", err);
+        }
+      }, 10000); // Check every 10 seconds
+    }
+    return () => {
+      if (intervalId) clearInterval(intervalId);
+    };
+  }, [historyId, activeFilters]);
 
   return (
     <MailContext.Provider value={{

@@ -28,6 +28,9 @@ def get_gmail_service(request: Request):
 def get_inbox(request: Request, date_from: str = None, date_to: str = None, sender: str = None, keyword: str = None, unread_only: bool = False):
     service = get_gmail_service(request)
     
+    profile = service.users().getProfile(userId='me').execute()
+    history_id = profile.get('historyId')
+    
     query_parts = ["label:inbox"]
     if unread_only:
         query_parts.append("is:unread")
@@ -59,7 +62,18 @@ def get_inbox(request: Request, date_from: str = None, date_to: str = None, send
             "date": headers.get('Date', '')
         })
         
-    return {"emails": email_list}
+    return {"emails": email_list, "historyId": history_id}
+
+@router.get('/sync')
+def sync_inbox(request: Request, history_id: str):
+    service = get_gmail_service(request)
+    try:
+        results = service.users().history().list(userId='me', startHistoryId=history_id).execute()
+        new_history_id = results.get('historyId')
+        has_updates = 'history' in results and len(results['history']) > 0
+        return {"has_updates": has_updates, "historyId": new_history_id}
+    except Exception as e:
+        return {"has_updates": True, "historyId": None}
 
 @router.get('/sent')
 def get_sent(request: Request):
