@@ -1,3 +1,11 @@
+
+
+https://github.com/user-attachments/assets/0708f009-0205-457c-a457-9e7fa293065e
+
+
+
+
+
 # Nebula Mail App
 
 A sleek, modern email client powered by **CopilotKit** and the **Google Gemini AI**. It integrates directly with your real Gmail account to let you read, search, compose, and reply to emails, all while being assisted by an intelligent AI assistant.
