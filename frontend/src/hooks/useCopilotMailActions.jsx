@@ -67,7 +67,7 @@ export function useCopilotMailActions() {
         <div style={{ padding: '12px', background: 'var(--bg-secondary)', borderRadius: '8px', border: '1px solid var(--border-color)', display: 'flex', alignItems: 'center', gap: '10px' }}>
           <Edit3 style={{ color: 'var(--accent-primary)', width: '18px', height: '18px' }} />
           <span style={{ fontSize: '0.9rem', color: 'var(--text-primary)' }}>
-            {status === "inProgress" ? "Opening composer..." : `Drafting email${args.to ? ` to ${args.to}` : ''}...`}
+            {status === "inProgress" ? "Opening composer..." : `Drafting email${args?.to ? ` to ${args.to}` : ''}...`}
           </span>
         </div>
       );
@@ -87,7 +87,7 @@ export function useCopilotMailActions() {
       { name: "subject", type: "string", description: "Email subject", required: true },
       { name: "body", type: "string", description: "Email body text", required: true },
     ],
-    render: ({ status, args }) => {
+    render: ({ status }) => {
       if (status === "inProgress") {
         return (
           <div style={{ padding: '12px', background: 'var(--bg-secondary)', borderRadius: '8px', border: '1px solid var(--border-color)', display: 'flex', alignItems: 'center', gap: '10px' }}>
@@ -130,12 +130,12 @@ export function useCopilotMailActions() {
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--accent-primary)', fontWeight: 500, fontSize: '0.9rem' }}>
             <Filter style={{ width: '16px', height: '16px' }} /> {status === "inProgress" ? "Filtering Inbox..." : "Inbox Filtered"}
           </div>
-          {(args.unreadOnly || args.sender || args.keyword || args.dateFrom) && (
+          {(args?.unreadOnly || args?.sender || args?.keyword || args?.dateFrom) && (
             <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
-              {args.unreadOnly && <span style={{ background: 'var(--bg-tertiary)', padding: '2px 6px', borderRadius: '4px' }}>Unread</span>}
-              {args.sender && <span style={{ background: 'var(--bg-tertiary)', padding: '2px 6px', borderRadius: '4px' }}>From: {args.sender}</span>}
-              {args.keyword && <span style={{ background: 'var(--bg-tertiary)', padding: '2px 6px', borderRadius: '4px' }}>Keyword: {args.keyword}</span>}
-              {args.dateFrom && <span style={{ background: 'var(--bg-tertiary)', padding: '2px 6px', borderRadius: '4px' }}>Since: {args.dateFrom}</span>}
+              {args?.unreadOnly && <span style={{ background: 'var(--bg-tertiary)', padding: '2px 6px', borderRadius: '4px' }}>Unread</span>}
+              {args?.sender && <span style={{ background: 'var(--bg-tertiary)', padding: '2px 6px', borderRadius: '4px' }}>From: {args.sender}</span>}
+              {args?.keyword && <span style={{ background: 'var(--bg-tertiary)', padding: '2px 6px', borderRadius: '4px' }}>Keyword: {args.keyword}</span>}
+              {args?.dateFrom && <span style={{ background: 'var(--bg-tertiary)', padding: '2px 6px', borderRadius: '4px' }}>Since: {args.dateFrom}</span>}
             </div>
           )}
         </div>
@@ -163,7 +163,7 @@ export function useCopilotMailActions() {
             <span style={{ fontSize: '0.9rem', color: 'var(--text-primary)', fontWeight: 500 }}>
               {status === "inProgress" ? "Opening email..." : "Email Opened"}
             </span>
-            {args.searchDescription && <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Search: {args.searchDescription}</span>}
+            {args?.searchDescription && <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Search: {args.searchDescription}</span>}
           </div>
         </div>
       );
