@@ -88,10 +88,10 @@ export function useCopilotMailActions() {
   // ── ACTION: filterInbox ─────────────────────────────────────────
   useCopilotAction({
     name: "filterInbox",
-    description: "Filter the inbox by date range, sender, keyword, or read status",
+    description: "Filter the inbox by date range, sender, keyword, or read status. MUST be called whenever the user asks to show, find, search, or filter emails. Do not just list emails in the chat.",
     parameters: [
       { name: "dateFrom", type: "string", description: "Start date in YYYY/MM/DD format (Gmail format)", required: false },
-      { name: "dateTo", type: "string", description: "End date in YYYY/MM/DD format (Gmail format)", required: false },
+      { name: "dateTo", type: "string", description: "End date in YYYY/MM/DD format (Gmail format). NOTE: This is exclusive, so to include today or a specific end date, you MUST add 1 extra day (e.g., to include Sept 7, pass 2026/09/08).", required: false },
       { name: "sender", type: "string", description: "Filter by sender email or name", required: false },
       { name: "keyword", type: "string", description: "Search keyword in subject or body", required: false },
       { name: "unreadOnly", type: "boolean", description: "Show only unread emails", required: false },
