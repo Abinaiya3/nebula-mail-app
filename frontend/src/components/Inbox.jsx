@@ -1,20 +1,29 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams, useLocation } from 'react-router-dom';
 import api from '../api';
 import { useMailContext } from '../context/MailContext';
 import FilterBar from './FilterBar';
 
 const Inbox = () => {
-  const { emails, setEmails, activeFilters } = useMailContext();
+  const { emails, setEmails, setActiveFilters } = useMailContext();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const location = useLocation();
 
   const fetchInbox = async () => {
     setLoading(true);
     try {
-      const params = new URLSearchParams(activeFilters).toString();
-      const response = await api.get(`/mail/inbox?${params}`);
+      // Sync URL params to context so FilterBar shows correct state
+      const currentFilters = {};
+      for (const [key, value] of searchParams.entries()) {
+        currentFilters[key] = value;
+      }
+      setActiveFilters(currentFilters);
+
+      const paramsString = searchParams.toString();
+      const response = await api.get(`/mail/inbox${paramsString ? '?' + paramsString : ''}`);
       setEmails(response.data.emails || []);
     } catch (err) {
       console.error(err);
@@ -26,7 +35,7 @@ const Inbox = () => {
 
   useEffect(() => {
     fetchInbox();
-  }, []);
+  }, [location.search]);
 
   if (loading) return <div className="loading-state">Loading inbox...</div>;
   if (error) return <div className="loading-state" style={{color: 'var(--text-secondary)'}}>{error}</div>;

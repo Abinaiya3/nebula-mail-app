@@ -33,19 +33,12 @@ export function MailProvider({ children }) {
   // ── ACTION: filterInbox ─────────────────────────────────────────
   const filterInbox = useCallback(async ({ dateFrom, dateTo, sender, keyword, unreadOnly } = {}) => {
     const filters = { date_from: dateFrom, date_to: dateTo, sender, keyword, unread_only: unreadOnly };
-    // Remove undefined keys
-    Object.keys(filters).forEach(k => (filters[k] === undefined || filters[k] === null || filters[k] === '') && delete filters[k]);
-    setActiveFilters(filters);
+    Object.keys(filters).forEach(k => (filters[k] === undefined || filters[k] === null || filters[k] === '' || filters[k] === false) && delete filters[k]);
     
     const params = new URLSearchParams(filters).toString();
-    const res = await api.get(`/mail/inbox?${params}`);
-    setEmails(res.data.emails || []);
-    if (res.data.historyId) {
-      setHistoryId(res.data.historyId);
-    }
     setCurrentView('inbox');
-    navigate('/inbox');
-    return res.data.emails || [];
+    navigate(`/inbox?${params}`);
+    return []; // We return empty here because Inbox.jsx will do the fetching
   }, [navigate]);
 
   // ── ACTION: openEmail ───────────────────────────────────────────

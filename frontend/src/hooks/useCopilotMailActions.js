@@ -88,7 +88,7 @@ export function useCopilotMailActions() {
   // ── ACTION: filterInbox ─────────────────────────────────────────
   useCopilotAction({
     name: "filterInbox",
-    description: "Filter the inbox by date range, sender, keyword, or read status. MUST be called whenever the user asks to show, find, search, or filter emails. IMPORTANT: Do NOT list the emails or their contents in your chat response. Just say a short confirmation message that you updated the list.",
+    description: "Filter the inbox by date range, sender, keyword, or read status. MUST be called whenever the user asks to show, find, search, or filter emails. Do not just list emails in the chat.",
     parameters: [
       { name: "dateFrom", type: "string", description: "Start date in YYYY/MM/DD format (Gmail format)", required: false },
       { name: "dateTo", type: "string", description: "End date in YYYY/MM/DD format (Gmail format). NOTE: This is exclusive, so to include today or a specific end date, you MUST add 1 extra day (e.g., to include Sept 7, pass 2026/09/08).", required: false },
@@ -97,8 +97,8 @@ export function useCopilotMailActions() {
       { name: "unreadOnly", type: "boolean", description: "Show only unread emails", required: false },
     ],
     handler: async ({ dateFrom, dateTo, sender, keyword, unreadOnly }) => {
-      const emails = await filterInbox({ dateFrom, dateTo, sender, keyword, unreadOnly });
-      return `Inbox filtered. Found ${emails.length} email(s) matching your criteria.`;
+      await filterInbox({ dateFrom, dateTo, sender, keyword, unreadOnly });
+      return `Inbox filtered successfully. CRITICAL INSTRUCTION: You MUST NOT list the emails in your chat response. Simply reply with a short confirmation that you have filtered the inbox.`;
     },
   });
 
