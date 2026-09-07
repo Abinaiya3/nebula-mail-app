@@ -5,7 +5,7 @@ import { useMailContext } from '../context/MailContext';
 import FilterBar from './FilterBar';
 
 const Inbox = () => {
-  const { emails, setEmails } = useMailContext();
+  const { emails, setEmails, activeFilters } = useMailContext();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
@@ -13,8 +13,8 @@ const Inbox = () => {
   const fetchInbox = async () => {
     setLoading(true);
     try {
-      // In real scenario, uncomment the API call. Using dummy data if it fails for UI preview.
-      const response = await api.get('/mail/inbox');
+      const params = new URLSearchParams(activeFilters).toString();
+      const response = await api.get(`/mail/inbox?${params}`);
       setEmails(response.data.emails || []);
     } catch (err) {
       console.error(err);

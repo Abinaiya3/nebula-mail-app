@@ -88,7 +88,7 @@ export function useCopilotMailActions() {
   // ── ACTION: filterInbox ─────────────────────────────────────────
   useCopilotAction({
     name: "filterInbox",
-    description: "Filter the inbox by date range, sender, keyword, or read status. MUST be called whenever the user asks to show, find, search, or filter emails. Do not just list emails in the chat.",
+    description: "Filter the inbox by date range, sender, keyword, or read status. MUST be called whenever the user asks to show, find, search, or filter emails. IMPORTANT: Do NOT list the emails or their contents in your chat response. Just say a short confirmation message that you updated the list.",
     parameters: [
       { name: "dateFrom", type: "string", description: "Start date in YYYY/MM/DD format (Gmail format)", required: false },
       { name: "dateTo", type: "string", description: "End date in YYYY/MM/DD format (Gmail format). NOTE: This is exclusive, so to include today or a specific end date, you MUST add 1 extra day (e.g., to include Sept 7, pass 2026/09/08).", required: false },

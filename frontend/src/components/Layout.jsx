@@ -2,10 +2,12 @@ import React from 'react';
 import { Outlet, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { Inbox, Send, Edit, Mail, LogOut } from 'lucide-react';
 import api from '../api';
+import { useMailContext } from '../context/MailContext';
 
 const Layout = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const { filterInbox } = useMailContext();
   
   const handleLogout = async () => {
     try {
@@ -19,18 +21,31 @@ const Layout = () => {
   
   const getHeaderTitle = () => {
     if (location.pathname.includes('/inbox')) return 'Inbox';
-    if (location.pathname.includes('/sent')) return 'Sent Mail';
-    if (location.pathname.includes('/compose')) return 'Compose Email';
-    if (location.pathname.includes('/message/')) return 'Read Email';
-    return 'Mail';
+    if (location.pathname.includes('/sent')) return 'Sent';
+    if (location.pathname.includes('/compose')) return 'Compose';
+    if (location.pathname.includes('/message')) return 'Email Detail';
+    return '';
   };
 
   return (
-    <div className="app-container">
+    <div className="layout">
       <div className="sidebar">
-        <h1><Mail className="w-8 h-8" /> NebulaMail</h1>
-        <nav>
-          <NavLink to="/inbox" className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}>
+        <div className="logo-container">
+          <Mail className="logo-icon w-6 h-6" />
+          <h1 className="logo-text">NebulaMail</h1>
+        </div>
+        <nav className="nav-menu">
+          <NavLink 
+            to="/inbox" 
+            className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}
+            onClick={(e) => {
+              // If already on /inbox, clicking again clears filters
+              if (location.pathname === '/inbox') {
+                e.preventDefault();
+                filterInbox();
+              }
+            }}
+          >
             <Inbox className="w-5 h-5" /> Inbox
           </NavLink>
           <NavLink to="/sent" className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}>

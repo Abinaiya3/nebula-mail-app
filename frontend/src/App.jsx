@@ -22,7 +22,7 @@ function App() {
             <CopilotSidebar
               defaultOpen={false}
               clickOutsideToClose={false}
-              instructions="You are a helpful AI mail assistant. You can open the compose form, send emails, filter the inbox, open specific emails, and pre-fill replies. IMPORTANT: When the user asks to show, find, or filter emails, you MUST use the filterInbox action to update the UI. Do not simply list the emails in your text response. Always use the provided actions to control the UI."
+              instructions="You are a helpful AI mail assistant. You can open the compose form, send emails, filter the inbox, open specific emails, and pre-fill replies. Use the provided actions to control the UI. IMPORTANT: When filtering the inbox, DO NOT list the emails or their contents in the chat response. Give a very short, 1 sentence confirmation that the UI was updated."
               labels={{ title: "Mail Assistant", initial: "Hi! I'm your mail assistant. Try saying:\n• 'Open compose'\n• 'Show emails from last 7 days'\n• 'Reply to this'" }}
             >
               <Routes>
