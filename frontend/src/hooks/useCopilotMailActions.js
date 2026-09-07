@@ -1,5 +1,7 @@
+import React from 'react';
 import { useCopilotAction, useCopilotReadable } from "@copilotkit/react-core";
 import { useMailContext } from "../context/MailContext";
+import { Filter, Mail, Edit3, Send, CheckCircle } from 'lucide-react';
 
 /**
  * This hook registers all 5 CopilotKit actions and the readable context.
@@ -60,6 +62,16 @@ export function useCopilotMailActions() {
       { name: "subject", type: "string", description: "Email subject", required: false },
       { name: "body", type: "string", description: "Email body text", required: false },
     ],
+    render: ({ status, args }) => {
+      return (
+        <div style={{ padding: '12px', background: 'var(--bg-secondary)', borderRadius: '8px', border: '1px solid var(--border-color)', display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <Edit3 style={{ color: 'var(--accent-primary)', width: '18px', height: '18px' }} />
+          <span style={{ fontSize: '0.9rem', color: 'var(--text-primary)' }}>
+            {status === "inProgress" ? "Opening composer..." : `Drafting email${args.to ? ` to ${args.to}` : ''}...`}
+          </span>
+        </div>
+      );
+    },
     handler: async ({ to, subject, body }) => {
       openCompose({ to: to || '', subject: subject || '', body: body || '' });
       return `Compose form opened${to ? ` for ${to}` : ''}. The fields have been pre-filled.`;
@@ -75,6 +87,22 @@ export function useCopilotMailActions() {
       { name: "subject", type: "string", description: "Email subject", required: true },
       { name: "body", type: "string", description: "Email body text", required: true },
     ],
+    render: ({ status, args }) => {
+      if (status === "inProgress") {
+        return (
+          <div style={{ padding: '12px', background: 'var(--bg-secondary)', borderRadius: '8px', border: '1px solid var(--border-color)', display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <Send style={{ color: 'var(--text-secondary)', width: '18px', height: '18px', animation: 'pulse 2s infinite' }} />
+            <span style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>Sending email...</span>
+          </div>
+        );
+      }
+      return (
+        <div style={{ padding: '12px', background: 'rgba(16, 185, 129, 0.1)', borderRadius: '8px', border: '1px solid rgba(16, 185, 129, 0.2)', display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <CheckCircle style={{ color: '#10b981', width: '18px', height: '18px' }} />
+          <span style={{ fontSize: '0.9rem', color: '#10b981' }}>Email sent successfully!</span>
+        </div>
+      );
+    },
     handler: async ({ to, subject, body }) => {
       try {
         await sendEmail({ to, subject, body });
@@ -96,6 +124,23 @@ export function useCopilotMailActions() {
       { name: "keyword", type: "string", description: "Search keyword in subject or body", required: false },
       { name: "unreadOnly", type: "boolean", description: "Show only unread emails", required: false },
     ],
+    render: ({ status, args }) => {
+      return (
+        <div style={{ padding: '12px', background: 'var(--bg-secondary)', borderRadius: '8px', border: '1px solid var(--border-color)', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--accent-primary)', fontWeight: 500, fontSize: '0.9rem' }}>
+            <Filter style={{ width: '16px', height: '16px' }} /> {status === "inProgress" ? "Filtering Inbox..." : "Inbox Filtered"}
+          </div>
+          {(args.unreadOnly || args.sender || args.keyword || args.dateFrom) && (
+            <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+              {args.unreadOnly && <span style={{ background: 'var(--bg-tertiary)', padding: '2px 6px', borderRadius: '4px' }}>Unread</span>}
+              {args.sender && <span style={{ background: 'var(--bg-tertiary)', padding: '2px 6px', borderRadius: '4px' }}>From: {args.sender}</span>}
+              {args.keyword && <span style={{ background: 'var(--bg-tertiary)', padding: '2px 6px', borderRadius: '4px' }}>Keyword: {args.keyword}</span>}
+              {args.dateFrom && <span style={{ background: 'var(--bg-tertiary)', padding: '2px 6px', borderRadius: '4px' }}>Since: {args.dateFrom}</span>}
+            </div>
+          )}
+        </div>
+      );
+    },
     handler: async ({ dateFrom, dateTo, sender, keyword, unreadOnly }) => {
       await filterInbox({ dateFrom, dateTo, sender, keyword, unreadOnly });
       return `Inbox filtered successfully. CRITICAL INSTRUCTION: You MUST NOT list the emails in your chat response. Simply reply with a short confirmation that you have filtered the inbox.`;
@@ -110,6 +155,19 @@ export function useCopilotMailActions() {
       { name: "emailId", type: "string", description: "The specific email ID to open", required: false },
       { name: "searchDescription", type: "string", description: "A natural language description to search for the email (e.g., 'latest email from Sarah about the project')", required: false },
     ],
+    render: ({ status, args }) => {
+      return (
+        <div style={{ padding: '12px', background: 'var(--bg-secondary)', borderRadius: '8px', border: '1px solid var(--border-color)', display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <Mail style={{ color: 'var(--accent-primary)', width: '18px', height: '18px' }} />
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
+            <span style={{ fontSize: '0.9rem', color: 'var(--text-primary)', fontWeight: 500 }}>
+              {status === "inProgress" ? "Opening email..." : "Email Opened"}
+            </span>
+            {args.searchDescription && <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Search: {args.searchDescription}</span>}
+          </div>
+        </div>
+      );
+    },
     handler: async ({ emailId, searchDescription }) => {
       const result = await openEmail({ emailId, searchDescription });
       if (result) {
@@ -126,6 +184,16 @@ export function useCopilotMailActions() {
     parameters: [
       { name: "customText", type: "string", description: "Custom text to include in the reply before the quoted message", required: false }
     ],
+    render: ({ status }) => {
+      return (
+        <div style={{ padding: '12px', background: 'var(--bg-secondary)', borderRadius: '8px', border: '1px solid var(--border-color)', display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <Edit3 style={{ color: 'var(--accent-primary)', width: '18px', height: '18px' }} />
+          <span style={{ fontSize: '0.9rem', color: 'var(--text-primary)' }}>
+            {status === "inProgress" ? "Preparing reply..." : "Reply drafted in composer."}
+          </span>
+        </div>
+      );
+    },
     handler: async ({ customText }) => {
       if (!currentOpenEmailId) {
         return "No email is currently open. Please open an email first, then say 'reply to this'.";
